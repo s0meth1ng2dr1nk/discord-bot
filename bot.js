@@ -1,6 +1,4 @@
 require('dotenv').config();
-const DISCORD_TOKEN = process.env.DISCORD_TOKEN;
-
 const path = require('node:path');
 const fs = require('node:fs');
 const { 
@@ -11,7 +9,6 @@ const {
     GuildMessages,
   },
 } = require('discord.js');
-
 const COMMANDS_PATH = path.join(__dirname, 'commands');
 const client = new Client({ intents: [Guilds, GuildMessages] });
 const command_filename_list = fs.readdirSync(COMMANDS_PATH).filter(file => file.endsWith('.js'));
@@ -22,7 +19,7 @@ for (const command_filename of command_filename_list) {
   const command_filepath = path.join(COMMANDS_PATH, command_filename);
   const command = require(command_filepath);
   if ('data' in command && 'execute' in command) {
-    command_list.push({'name':command.data.name, 'description':command.data.description});
+    command_list.push({'name':command.data.name, 'description':command.data.description, 'options':command.data.options});
     execute_dict[command.data.name] = command.execute;
   }
 }
@@ -40,7 +37,7 @@ client.on(Events.InteractionCreate, async interaction => {
   if (!interaction.commandName in execute_dict) {
     return;
   }
-  console.log(interaction.commandName)
+  console.log(interaction.commandName);
   try {
     await execute_dict[interaction.commandName](interaction);
   } catch (error) {
@@ -54,4 +51,4 @@ client.on(Events.InteractionCreate, async interaction => {
 });
 
 
-client.login(DISCORD_TOKEN);
+client.login(process.env.DISCORD_TOKEN);
