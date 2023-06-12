@@ -18,14 +18,12 @@ let execute_dict = {};
 for (const command_filename of command_filename_list) {
   const command_filepath = path.join(COMMANDS_PATH, command_filename);
   const command = require(command_filepath);
-  console.log(command)
   if (!('data' in command && 'execute' in command)) {
     continue;
   }
   command_list.push({'name':command.data.name, 'description':command.data.description, 'options':command.data.options});
   execute_dict[command.data.name] = command.execute;
 }
-
 
 client.once(Events.ClientReady, c => {
   console.log(`Ready! Logged in as ${c.user.tag}!`);

@@ -2,25 +2,29 @@ require('dotenv').config();
 const path = require('node:path');
 const { SlashCommandBuilder } = require('discord.js');
 const Ec2 = require(path.join(path.dirname(require.main.filename), 'util/ec2.js'))
-const _Command_ = require(path.join(path.dirname(require.main.filename), 'util/command.js'))
 
+const ARG1 = 'instance_name'
 
-class Command extends _Command_ {
-    setData() {
-        super.setName('hey')
-        super.setDescription('あいさつに反応してbotが返事します')
-        super.addStringOption('instance_name', 'インスタンス名を指定してください')
-    }
-    async executeCommand(interaction) {
-        const instance_name = super.getStringOption(interaction, 'instance_name')
-        const ec2 = await Ec2.build(instance_name)
-        const instance_id = ec2.instance_id
-        return instance_id;
-    }
+async function executeCommand(interaction) {
+    const instance_name = interaction.options.getString(ARG1)
+    const ec2 = await Ec2.build(instance_name)
+    const message = await ec2.start_instance()
+    return message;
 }
 
-console.log(new Command())
-
 module.exports = {
-	Command:Command
+	data: new SlashCommandBuilder()
+		.setName('hey')
+		.setDescription('あいさつに反応してbotが返事します')
+        .addStringOption(option =>
+            option
+                .setName(ARG1)
+                .setDescription('インスタンス名を入力してください')
+                .setRequired(true)
+        ),
+	execute: async function(interaction) {
+		await interaction.deferReply();
+        const message = await executeCommand(interaction);
+        await interaction.editReply(message);
+	},
 };
