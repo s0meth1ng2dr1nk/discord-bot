@@ -9,7 +9,7 @@ const {
     GuildMessages,
   },
 } = require('discord.js');
-const COMMANDS_PATH = path.join(__dirname, 'commands');
+const COMMANDS_PATH = path.join(path.dirname(require.main.filename), 'commands');
 const client = new Client({ intents: [Guilds, GuildMessages] });
 const command_filename_list = fs.readdirSync(COMMANDS_PATH).filter(file => file.endsWith('.js'));
 let command_list = [];
@@ -18,11 +18,14 @@ let execute_dict = {};
 for (const command_filename of command_filename_list) {
   const command_filepath = path.join(COMMANDS_PATH, command_filename);
   const command = require(command_filepath);
-  if ('data' in command && 'execute' in command) {
-    command_list.push({'name':command.data.name, 'description':command.data.description, 'options':command.data.options});
-    execute_dict[command.data.name] = command.execute;
+  console.log(command)
+  if (!('data' in command && 'execute' in command)) {
+    continue;
   }
+  command_list.push({'name':command.data.name, 'description':command.data.description, 'options':command.data.options});
+  execute_dict[command.data.name] = command.execute;
 }
+
 
 client.once(Events.ClientReady, c => {
   console.log(`Ready! Logged in as ${c.user.tag}!`);
