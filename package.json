@@ -1,10 +1,23 @@
 {
   "name": "discord-bot",
   "version": "1.0.0",
+  "description": "",
   "main": "bot.js",
   "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "dev": "nodemon bot.js",
     "start":"node bot.js"
   },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/s0meth1ng2dr1nk/discord-bot.git"
+  },
+  "author": "",
+  "license": "",
+  "bugs": {
+    "url": "https://github.com/s0meth1ng2dr1nk/discord-bot/issues"
+  },
+  "homepage": "https://github.com/s0meth1ng2dr1nk/discord-bot",
   "dependencies": {
     "@aws-sdk/client-ec2": "^3.350.0",
     "discord.js": "^14.11.0",
