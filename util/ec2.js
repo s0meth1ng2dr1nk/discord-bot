@@ -82,13 +82,15 @@ class Ec2 {
     }
     let instance = await this.get_discribe();
     let state = await this.get_state(instance);
-    while (state != 'running') {
+    let ip = await this.get_ip(instance);
+    while (state != 'running' || typeof ip === "undefined") {
       await setTimeout(1000);
       instance = await this.get_discribe();
       state = await this.get_state(instance);
+      ip = await this.get_ip(instance);
     }
-    this.instance_ip = await this.get_ip(instance);
     this.instance_state = state;
+    this.instance_ip = ip;
   }
 
   async stop_instance() {
